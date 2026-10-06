@@ -1,0 +1,15 @@
+# Dependencias
+node_modules/
+
+# Variables de entorno: NUNCA al repo
+.env
+.env.local
+!.env.example
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# macOS
+.DS_Store
