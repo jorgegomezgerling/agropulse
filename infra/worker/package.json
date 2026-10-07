@@ -1,0 +1,13 @@
+{
+  "name": "agropulse-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "simulator": "node src/simulator.js",
+    "worker": "node src/worker.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "kafkajs": "^2.2.4"
+  }
+}
