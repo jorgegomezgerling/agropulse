@@ -11,6 +11,7 @@ export function OrgSwitcher() {
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
+      style={styles.scroll}
       contentContainerStyle={styles.row}
     >
       {memberships.map((m) => {
@@ -39,10 +40,12 @@ export function OrgSwitcher() {
 }
 
 const styles = StyleSheet.create({
+  scroll: { flexGrow: 0 }, // ocupa solo el alto de los chips, no media pantalla
   row: {
     gap: spacing.sm,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
+    alignItems: "center",
   },
   chip: {
     flexDirection: "row",
