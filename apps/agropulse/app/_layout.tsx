@@ -1,14 +1,17 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
+import { OrgProvider } from "@/context/OrgContext";
 import { LoadingState } from "@/components/ScreenState";
 import { colors, fontWeight } from "@/theme";
 
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <StatusBar style="dark" />
-      <RootNavigator />
+      <OrgProvider>
+        <StatusBar style="dark" />
+        <RootNavigator />
+      </OrgProvider>
     </AuthProvider>
   );
 }
