@@ -1,8 +1,12 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useFarm } from "@/context/FarmContext";
 import { colors, fontWeight } from "@/theme";
 
 export default function TabsLayout() {
+  const { alerts } = useFarm();
+  const unread = alerts.filter((a) => a.read_at === null).length;
+
   return (
     <Tabs
       screenOptions={{
@@ -33,6 +37,8 @@ export default function TabsLayout() {
         name="alertas"
         options={{
           title: "Alertas",
+          tabBarBadge: unread > 0 ? unread : undefined,
+          tabBarBadgeStyle: { backgroundColor: colors.danger },
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="notifications-outline" color={color} size={size} />
           ),
