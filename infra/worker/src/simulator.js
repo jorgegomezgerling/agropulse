@@ -14,6 +14,14 @@ const producer = kafka.producer();
 const state = new Map();
 let openPlots = new Set();
 
+// Nivel "natural" de cada lote (el de la semilla, §14): sin riego ni lluvia, la humedad vuelve acá
+const NATURAL_LEVELS = {
+  "Costa 1": 33,
+  "Costa 2": 19,
+  "Monte A": 36,
+  "Lote Único": 30,
+};
+
 async function loadStations() {
   const { data, error } = await supabase
     .from("stations")
@@ -35,6 +43,7 @@ async function loadStations() {
       plotName: station.plots?.name ?? "?",
       moisture: start,
       baseline: start,
+      natural: NATURAL_LEVELS[station.plots?.name] ?? start,
       ticks: 0,
     });
   }
@@ -58,9 +67,10 @@ async function refreshOpenValves() {
 function nextMoisture(station) {
   if (openPlots.has(station.plotId)) {
     station.moisture += randomBetween(0.8, 1.6); // riego: sube
-    station.baseline = station.moisture; // lo regado "queda"
+    station.baseline = station.moisture; // lo regado "queda" un rato
   } else {
-    station.baseline -= 0.02; // evaporación lenta
+    // Sin riego, el nivel base vuelve de a poco al natural del lote (drenaje y evaporación)
+    station.baseline += (station.natural - station.baseline) * 0.01;
     station.moisture +=
       (station.baseline - station.moisture) * 0.1 + randomBetween(-0.4, 0.4);
   }
@@ -105,7 +115,7 @@ async function tick(stationId) {
   if (station.ticks % 4 === 0) {
     const rain =
       Math.random() < 0.15 ? Math.round(randomBetween(0.2, 3) * 10) / 10 : 0;
-    station.baseline += rain * 0.5;
+    station.baseline += rain * 0.3; // la lluvia sube el nivel, y después vuelve al natural
     await producer.send({
       topic: TOPICS.WEATHER,
       messages: [
